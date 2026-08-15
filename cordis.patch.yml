@@ -1,0 +1,10 @@
+# dsh-courier 挂载片段：作为 bundle 由 dsh.profile.bundles 自动应用
+- insert:
+    - id: courier
+      name: "dsh-courier"
+      config:
+        # 静态角色种子（可选，也可在会话里用 courier_register 运行时注册）：
+        # roles: { coder: "<session-id>", reviewer: "<session-id>" }
+        # 角色协议覆盖（可选）：rolePrompts: { coder: "...", reviewer: "..." }
+        roles: {}
+        rolePrompts: {}
