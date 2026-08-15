@@ -1,5 +1,16 @@
 # dsh-courier
 
+**dsh-courier** is a [DSH](https://github.com/deepseek-ai/deepseek-harness) plugin for **cross-session messaging**: reliable message delivery and role addressing between multiple sessions in the same host process, powering the "coding ↔ review" workflow loop.
+
+- `courier_send` — wakes an online target session immediately (`agent.followup`); offline targets get persistent mailbox delivery (default `~/.dsh/courier/mailbox.jsonl`), auto-delivered on session resume
+- `courier_register` / `courier_list` — role ↔ session mapping persisted in `~/.dsh/courier/roles.json` (or statically seeded via config)
+- Review ledger at `.pi/review/ledger.md`: issues tracked as R1..Rn with `open → fixed → verified` states (reopened if re-review fails)
+
+---
+
+以下为中文文档 / Chinese documentation below:
+
+
 DSH 跨会话通信插件：为同一宿主进程内的多个会话提供可靠消息投递与角色寻址，
 支撑"编码 ↔ 评审"循环工作流。
 
