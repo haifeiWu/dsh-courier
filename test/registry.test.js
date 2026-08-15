@@ -38,6 +38,24 @@ test("bind writes the file and rebinds a session to a new role", () => {
   assert.deepEqual(second.list(), [{ role: "reviewer", sessionId: "s1" }]);
 });
 
+test("rebinding a role to a new session clears the old session's mapping", () => {
+  const registry = new RoleRegistry(tempPath());
+  registry.bind("coder", "s1");
+  registry.bind("coder", "s2");
+  assert.equal(registry.roleOf("s1"), undefined);
+  assert.equal(registry.roleOf("s2"), "coder");
+  assert.equal(registry.sessionIdOf("coder"), "s2");
+});
+
+test("old session rebinding to another role does not delete the active role", () => {
+  const registry = new RoleRegistry(tempPath());
+  registry.bind("coder", "s1");
+  registry.bind("coder", "s2");
+  registry.bind("reviewer", "s1");
+  assert.equal(registry.sessionIdOf("coder"), "s2");
+  assert.equal(registry.roleOf("s1"), "reviewer");
+});
+
 test("invalid role name throws", () => {
   const registry = new RoleRegistry(tempPath());
   assert.throws(() => registry.bind("Bad Role", "s1"), /invalid role name/);
