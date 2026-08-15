@@ -26,6 +26,27 @@ test("load merges file entries over seeds", () => {
   assert.equal(registry.roleOf("s2"), undefined);
 });
 
+test("load clears stale forward mapping when file rebinds a seeded session", () => {
+  const path = tempPath();
+  writeFileSync(path, JSON.stringify({ reviewer: "s1" }), "utf8");
+  const registry = new RoleRegistry(path, { coder: "s1" });
+  registry.load();
+  assert.equal(registry.sessionIdOf("coder"), undefined);
+  assert.equal(registry.roleOf("s1"), "reviewer");
+  assert.deepEqual(registry.list(), [{ role: "reviewer", sessionId: "s1" }]);
+});
+
+test("load handles a session rebinding while a role moves to a new session", () => {
+  const path = tempPath();
+  writeFileSync(path, JSON.stringify({ coder: "s1", reviewer: "s2" }), "utf8");
+  const registry = new RoleRegistry(path, { reviewer: "s1" });
+  registry.load();
+  assert.equal(registry.sessionIdOf("coder"), "s1");
+  assert.equal(registry.sessionIdOf("reviewer"), "s2");
+  assert.equal(registry.roleOf("s1"), "coder");
+  assert.equal(registry.roleOf("s2"), "reviewer");
+});
+
 test("bind writes the file and rebinds a session to a new role", () => {
   const path = tempPath();
   const first = new RoleRegistry(path);

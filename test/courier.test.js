@@ -108,6 +108,25 @@ test("an agent disappearing between checks returns queued", async () => {
   assert.equal(mailbox.pendingFor("s2").length, 1);
 });
 
+test("send to own session id rejects", async () => {
+  const { agents, courier } = setup();
+  agents.set("s1", fakeAgent("s1"));
+  await assert.rejects(
+    courier.send(fakeAgent("s1"), { toSessionId: "s1", message: "x" }),
+    /cannot send to yourself/
+  );
+});
+
+test("send to own registered role rejects", async () => {
+  const { agents, registry, courier } = setup();
+  registry.bind("coder", "s1");
+  agents.set("s1", fakeAgent("s1"));
+  await assert.rejects(
+    courier.send(fakeAgent("s1"), { toRole: "coder", message: "x" }),
+    /cannot send to yourself/
+  );
+});
+
 test("register binds the calling session and status reflects it", () => {
   const { agents, courier } = setup();
   agents.set("s1", fakeAgent("s1"));
